@@ -17,7 +17,7 @@ pipeline{
     stages {
         stage('Clone Git repository') {
             when {
-                expression { true }
+                expression { BUILD_RESULT = 'FAILURE' }
             }
             steps {
                 git branch: GIT_BRANCH, url: GIT_REPO
@@ -26,8 +26,8 @@ pipeline{
     
         
         stage('Build and test using Maven') {
-            when {
-                expression { true }
+           when {
+                expression { BUILD_RESULT = 'FAILURE' }
             }
             steps {
                 bat 'mvn clean install -DskipTests=true'
@@ -35,8 +35,8 @@ pipeline{
         }
         
         stage('Run SonarQube analysis') {
-            when {
-                expression { true }
+           when {
+                expression { BUILD_RESULT = 'FAILURE' }
             }
           steps {
 
@@ -50,7 +50,7 @@ pipeline{
         
        stage('Check quality gate status') {
         when {
-                expression { true }
+                expression { BUILD_RESULT = 'FAILURE' }
             }
             steps {
               script {
@@ -64,7 +64,7 @@ pipeline{
        
       stage('Upload JAR to Nexus repository') {
         when {
-                expression { true }
+                expression { BUILD_RESULT = 'FAILURE' }
             }
 
         steps {
@@ -98,7 +98,7 @@ pipeline{
       }
     stage('Build Docker Image') {
   when {
-                expression { true }
+                expression { BUILD_RESULT = 'FAILURE' }
             }
       steps {
         script {
