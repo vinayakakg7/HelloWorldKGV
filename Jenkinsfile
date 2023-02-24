@@ -102,8 +102,8 @@ pipeline{
         script{
 			def imageTag = "${DOCKER_NAMESPACE}/${env.JOB_NAME}:${env.BUILD_ID}"
 			 bat "docker build -t ${imageTag} -f Dockerfile ."
-          bat 'docker image tag ${imageTag}'
-          bat 'docker image tag ${imageTag}.latest'
+          bat 'docker image tag ${imageTag} ${imageTag}-v1.${env.BUILD_ID}'
+          bat 'docker image tag ${imageTag} ${imageTag}-v1.latest'
 
         }
       }
@@ -113,8 +113,8 @@ pipeline{
         script{
           withCredentials([string(credentialsId: 'Docker_Credentials', variable: 'Docker_Cred')]) {
             bat 'docker login -u vinayakakg7 -p ${Docker_Cred}'
-             bat 'docker image push ${imageTag}'
-              bat 'docker image push ${imageTag}.latest'
+             bat 'docker image push ${imageTag}-v1.${env.BUILD_ID}'
+              bat 'docker image push ${imageTag}-v1.latest'
 
     
                 }
