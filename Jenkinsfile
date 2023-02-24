@@ -82,6 +82,11 @@ pipeline{
         }
       }
     stage('Build Docker Image') {
+        when {
+                not {
+                    succeeded()
+                }
+            }
       steps {
         script {
           def imageTag = "${DOCKER_REGISTRY}/${DOCKER_NAMESPACE}/${env.JOB_NAME}:${env.BUILD_ID}"
