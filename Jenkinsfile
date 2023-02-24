@@ -16,9 +16,7 @@ pipeline{
     }
     stages {
         stage('Clone Git repository') {
-          when {
-                expression { BUILD_RESULT !== 'SUCCESS' }
-            }
+          
             steps {
                 git branch: GIT_BRANCH, url: GIT_REPO
             }
@@ -26,18 +24,14 @@ pipeline{
     
         
         stage('Build and test using Maven') {
-           when {
-                expression { BUILD_RESULT !== 'SUCCESS' }
-            }
+           
             steps {
                 bat 'mvn clean install -DskipTests=true'
             }
         }
         
         stage('Run SonarQube analysis') {
-           when {
-                expression { BUILD_RESULT !== 'SUCCESS' }
-            }
+          
           steps {
 
              script{
@@ -49,9 +43,7 @@ pipeline{
        }
         
        stage('Check quality gate status') {
-        when {
-                expression { BUILD_RESULT !== 'SUCCESS' }
-            }
+        
             steps {
               script {
                  def qg = waitForQualityGate()
@@ -63,10 +55,7 @@ pipeline{
        }
        
       stage('Upload JAR to Nexus repository') {
-        when {
-                expression { BUILD_RESULT !== 'SUCCESS' }
-            }
-
+        
         steps {
 
            script {
@@ -96,10 +85,10 @@ pipeline{
             }
         }
       }
+    post {
+        always {
     stage('Build Docker Image') {
-  when {
-                expression { BUILD_RESULT !== 'SUCCESS' }
-            }
+ 
       steps {
         script {
           def imageTag = "${DOCKER_REGISTRY}/${DOCKER_NAMESPACE}/${env.JOB_NAME}:${env.BUILD_ID}"
@@ -109,6 +98,8 @@ pipeline{
           }
         }
       }
+    }
+        }
     }
 }
 }
