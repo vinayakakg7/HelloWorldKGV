@@ -85,18 +85,44 @@ pipeline{
             }
         }
       }
-    stage('Build Docker Image') {
+   // stage('Build Docker Image') {
  
-      steps {
-        script {
-          def imageTag = "${DOCKER_REGISTRY}/${DOCKER_NAMESPACE}/${env.JOB_NAME}:${env.BUILD_ID}"
-          bat "docker build -t ${imageTag} -f Dockerfile ."
-          withDockerRegistry([credentialsId: "Docker_Credential", url: DOCKER_REGISTRY]) {
-            bat "docker push ${imageTag}"
-          }
+   //   steps {
+   //     script {
+   //       def imageTag = "${DOCKER_NAMESPACE}/${env.JOB_NAME}:${env.BUILD_ID}"
+   //       bat "docker build -t ${imageTag} -f Dockerfile ."
+   //       withDockerRegistry([credentialsId: "Docker_Credential", url: DOCKER_REGISTRY]) {
+    //        bat "docker push ${imageTag}"
+   //       }
+    //    }
+   //   }
+
+   stage('Docker image build'){
+      steps{
+        script{
+			def imageTag = "${DOCKER_NAMESPACE}/${env.JOB_NAME}:${env.BUILD_ID}"
+			 bat "docker build -t ${imageTag} -f Dockerfile ."
+          bat 'docker image tag ${imageTag}'
+          bat 'docker image tag ${imageTag}.latest'
+
         }
       }
     }
+    stage('Push image to DockerHub'){
+      steps{
+        script{
+          withCredentials([string(credentialsId: 'Docker_Credentials', variable: 'Docker_Cred')]) {
+            bat 'docker login -u vinayakakg7 -p ${Docker_Cred}'
+             bat 'docker image push ${imageTag}'
+              bat 'docker image push ${imageTag}.latest'
+
     
-}
+                }
+
+             }
+        
+        }
+    }
+    }
+    
 }
