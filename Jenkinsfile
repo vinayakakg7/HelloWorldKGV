@@ -16,6 +16,9 @@ pipeline{
     }
     stages {
         stage('Clone Git repository') {
+            when {
+                expression { true }
+            }
             steps {
                 git branch: GIT_BRANCH, url: GIT_REPO
             }
@@ -23,12 +26,18 @@ pipeline{
     
         
         stage('Build and test using Maven') {
+            when {
+                expression { true }
+            }
             steps {
                 bat 'mvn clean install -DskipTests=true'
             }
         }
         
         stage('Run SonarQube analysis') {
+            when {
+                expression { true }
+            }
           steps {
 
              script{
@@ -40,6 +49,9 @@ pipeline{
        }
         
        stage('Check quality gate status') {
+        when {
+                expression { true }
+            }
             steps {
               script {
                  def qg = waitForQualityGate()
@@ -51,6 +63,9 @@ pipeline{
        }
        
       stage('Upload JAR to Nexus repository') {
+        when {
+                expression { true }
+            }
 
         steps {
 
