@@ -5,9 +5,9 @@
   
   <modelVersion>4.0.0</modelVersion>
   
-  <groupId>com.example</groupId>
+  <groupId>com.vinayaka</groupId>
   <artifactId>HelloWorld</artifactId>
-  <version>1.1</version>
+  <version>1.0.0</version>
   
   <dependencies>
     <!-- No dependencies required for this example -->
