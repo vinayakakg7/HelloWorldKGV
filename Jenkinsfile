@@ -82,10 +82,8 @@ pipeline{
         }
       }
     stage('Build Docker Image') {
-        when {
-                not {
-                    succeeded()
-                }
+  when {
+                expression { true }
             }
       steps {
         script {
