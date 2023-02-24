@@ -9,6 +9,8 @@ pipeline{
 
         GIT_REPO = 'https://github.com/vinayakakg7/HelloWorldKGV.git'
         GIT_BRANCH = 'main'
+        NEXUS_SNAPSHOT_REPO = 'demo_snapshot'
+      NEXUS_RELEASE_REPO = 'demo_release'
     }
     stages {
         stage('Clone Git repository') {
@@ -44,5 +46,35 @@ pipeline{
               }
           }
        }
+       
+      stage('Upload JAR to Nexus repository') {
+
+        steps {
+
+           script {
+            def pom = readMavenPom file: 'pom.xml'
+              def version = pom.version
+                env.version = version
+                  def snapshot = version.endsWith('-SNAPSHOT')
+                    
+                    def repo = snapshot ? NEXUS_SNAPSHOT_REPO : NEXUS_RELEASE_REPO
+                    env.repo = repo
+                  
+                    def groupId = pom.groupId
+                    env.groupId = groupId
+
+        
+                    nexusArtifactUploader artifacts: [
+                          [artifactId: 'springboot', classifier: '', file: 'target/*.jar', type: 'jar']
+                          ], 
+                           credentialsId: 'nexus_cred', 
+                           groupId: "${env.groupId}", 
+                            nexusUrl: '13.234.33.222:8081',
+                            nexusVersion: 'nexus3', 
+                            protocol: 'http',
+                            repository: "${env.repo}", 
+                           version: "${env.version}"
+
+            }
 }
 }
