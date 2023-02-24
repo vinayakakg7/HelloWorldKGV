@@ -76,7 +76,7 @@ pipeline{
                           ], 
                            credentialsId: 'nexus_cred', 
                            groupId: "${env.groupId}", 
-                            nexusUrl: '13.234.33.222:8081',
+                            nexusUrl: '15.206.72.230:8081',
                             nexusVersion: 'nexus3', 
                             protocol: 'http',
                             repository: "${env.repo}", 
@@ -85,8 +85,6 @@ pipeline{
             }
         }
       }
-    post {
-        always {
     stage('Build Docker Image') {
  
       steps {
@@ -99,7 +97,6 @@ pipeline{
         }
       }
     }
-        }
-    }
+    
 }
 }
