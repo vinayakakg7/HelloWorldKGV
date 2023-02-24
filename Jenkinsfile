@@ -68,7 +68,7 @@ pipeline{
 
         
                     nexusArtifactUploader artifacts: [
-                          [artifactId: 'springboot', classifier: '', file: 'target/HelloWorld.jar', type: 'jar']
+                          [artifactId: 'springboot', classifier: '', file: 'target/HelloWorld-${env.version}.jar', type: 'jar']
                           ], 
                            credentialsId: 'nexus_cred', 
                            groupId: "${env.groupId}", 
