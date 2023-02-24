@@ -54,75 +54,36 @@ pipeline{
           }
        }
        
-      stage('Upload JAR to Nexus repository') {
-        
-        steps {
-
-           script {
-            def pom = readMavenPom file: 'pom.xml'
-              def version = pom.version
-                env.version = version
-                  def snapshot = version.endsWith('-SNAPSHOT')
-                    
-                    def repo = snapshot ? NEXUS_SNAPSHOT_REPO : NEXUS_RELEASE_REPO
-                    env.repo = repo
-                  
-                    def groupId = pom.groupId
-                    env.groupId = groupId
-
-        
-                    nexusArtifactUploader artifacts: [
-                          [artifactId: 'springboot', classifier: '', file: 'target/HelloWorld.jar', type: 'jar']
-                          ], 
-                           credentialsId: 'nexus_cred', 
-                           groupId: "${env.groupId}", 
-                            nexusUrl: '15.206.72.230:8081',
-                            nexusVersion: 'nexus3', 
-                            protocol: 'http',
-                            repository: "${env.repo}", 
-                           version: "${env.version}"
-
-            }
-        }
-      }
-   // stage('Build Docker Image') {
+   
+   /stage('Build Docker Image') {
  
-   //   steps {
-   //     script {
-   //       def imageTag = "${DOCKER_NAMESPACE}/${env.JOB_NAME}:${env.BUILD_ID}"
-   //       bat "docker build -t ${imageTag} -f Dockerfile ."
-   //       withDockerRegistry([credentialsId: "Docker_Credential", url: DOCKER_REGISTRY]) {
-    //        bat "docker push ${imageTag}"
-   //       }
-    //    }
-   //   }
-
-   stage('Docker image build'){
-      steps{
-        script{
-			def imageTag = "${DOCKER_NAMESPACE}/${env.JOB_NAME}:${env.BUILD_ID}"
-			 bat "docker build -t ${imageTag} -f Dockerfile ."
-          bat 'docker image tag ${imageTag} ${imageTag}-v1.${env.BUILD_ID}'
-          bat 'docker image tag ${imageTag} ${imageTag}-v1.latest'
-
-        }
+   steps {
+        script {
+          def imageTag = "${DOCKER_NAMESPACE}/${env.JOB_NAME}:${env.BUILD_ID}"
+          bat "docker build -t ${imageTag} -f Dockerfile ."
+          withDockerRegistry([credentialsId: "Docker_Credential", url: DOCKER_REGISTRY]) {
+            bat "docker push ${imageTag}"
+       }
+       }
       }
-    }
-    stage('Push image to DockerHub'){
-      steps{
-        script{
-          withCredentials([string(credentialsId: 'Docker_Credentials', variable: 'Docker_Cred')]) {
-            bat 'docker login -u vinayakakg7 -p ${Docker_Cred}'
-             bat 'docker image push ${imageTag}-v1.${env.BUILD_ID}'
-              bat 'docker image push ${imageTag}-v1.latest'
+
+  
+
+   // stage('Push image to DockerHub'){
+    //  steps{
+    //    script{
+     //     withCredentials([string(credentialsId: 'Docker_Credentials', variable: 'Docker_Cred')]) {
+      //      bat 'docker login -u vinayakakg7 -p ${Docker_Cred}'
+       //      bat 'docker image push ${imageTag}-v1.${env.BUILD_ID}'
+       //       bat 'docker image push ${imageTag}-v1.latest'
 
     
-                }
+          //      }
 
-             }
+         //    }
         
-        }
+     //   }
     }
     }
-    
 }
+

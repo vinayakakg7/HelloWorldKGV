@@ -2,6 +2,7 @@ FROM maven as build
 WORKDIR /app
 copy . .
 RUN mvn install
+RUN mvn clean package
 
 
 FROM openjdk:11.0
