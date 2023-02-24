@@ -87,11 +87,12 @@ pipeline{
         script {
           def imageTag = "${DOCKER_REGISTRY}/${DOCKER_NAMESPACE}/${env.JOB_NAME}:${env.BUILD_ID}"
           bat "docker build -t ${imageTag} -f Dockerfile ."
-          withDockerRegistry([credentialsId: "docker-hub-credentials", url: DOCKER_REGISTRY]) {
+          withDockerRegistry([credentialsId: "Docker_Credentials", url: DOCKER_REGISTRY]) {
             bat "docker push ${imageTag}"
           }
         }
       }
     }
+}
 }
 }
