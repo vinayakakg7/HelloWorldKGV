@@ -11,7 +11,7 @@ pipeline{
         GIT_BRANCH = 'main'
         NEXUS_SNAPSHOT_REPO = 'demo_snapshot'
         NEXUS_RELEASE_REPO = 'demo_release'
-        DOCKER_REGISTRY = "https://hub.docker.com/"
+        DOCKER_REGISTRY = "hub.docker.com"
         DOCKER_NAMESPACE = "vinayakakg7"
     }
     stages {
