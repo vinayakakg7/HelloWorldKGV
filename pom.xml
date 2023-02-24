@@ -21,8 +21,9 @@
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
+                    <finalName>HelloWorld</finalName>
                 </configuration>
-            </plugin>
+         </plugin>
         </plugins>
     </build>
 </project>

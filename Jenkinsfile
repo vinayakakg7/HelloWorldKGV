@@ -10,7 +10,9 @@ pipeline{
         GIT_REPO = 'https://github.com/vinayakakg7/HelloWorldKGV.git'
         GIT_BRANCH = 'main'
         NEXUS_SNAPSHOT_REPO = 'demo_snapshot'
-      NEXUS_RELEASE_REPO = 'demo_release'
+        NEXUS_RELEASE_REPO = 'demo_release'
+        DOCKER_REGISTRY = "docker.io"
+        DOCKER_NAMESPACE = "vinayakakg7"
     }
     stages {
         stage('Clone Git repository') {
@@ -66,7 +68,7 @@ pipeline{
 
         
                     nexusArtifactUploader artifacts: [
-                          [artifactId: 'springboot', classifier: '', file: 'target/*.jar', type: 'jar']
+                          [artifactId: 'springboot', classifier: '', file: 'target/HelloWorld.jar', type: 'jar']
                           ], 
                            credentialsId: 'nexus_cred', 
                            groupId: "${env.groupId}", 
@@ -79,5 +81,17 @@ pipeline{
             }
         }
       }
+      stages {
+    stage('Build Docker Image') {
+      steps {
+        script {
+          def imageTag = "${DOCKER_REGISTRY}/${DOCKER_NAMESPACE}/${env.JOB_NAME}:${env.BUILD_ID}"
+          bat "docker build -t ${imageTag} -f Dockerfile ."
+          withDockerRegistry([credentialsId: "docker-hub-credentials", url: DOCKER_REGISTRY]) {
+            bat "docker push ${imageTag}"
+          }
+        }
+      }
+    }
 }
 }
